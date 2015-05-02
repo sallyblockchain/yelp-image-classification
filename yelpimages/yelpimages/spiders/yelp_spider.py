@@ -7,14 +7,31 @@ class DemoSpider(scrapy.Spider):
     allowed_domains = ["yelp.com"]
     base_url = "http://www.yelp.com/biz_photos/"
     start_urls = []
-    suffix = ["tacodeli-austin-3"]
-    next_page = "?start=100"
-    for each in suffix:
+    next_page = ["?start=100", "?start=200", "?start=300"]
+    
+    tacodeli = ["tacodeli-austin-3", "tacodeli-austin-4", 
+                "tacodeli-austin-6", "tacodeli-austin-11",
+                "tacodeli-west-lake-hills"]
+    for each in tacodeli:
         curr_url = base_url + each
-        next_url = curr_url + next_page
+        next_url = curr_url + next_page[0]
+        start_urls.append(curr_url)
+        start_urls.append(next_url)
+
+    torchys = "torchys-tacos-austin"
+    start_urls.append(base_url + torchys)
+    for i in range(0, len(next_page)):
+        start_urls.append(base_url + torchys + next_page[i])
+
+    index = [3, 4, 6, 7, 10, 11, 12, 13]
+    
+    for i in range(0, len(index)):
+        curr_url = base_url + torchys + '-' + str(index[i])
+        next_url = curr_url + next_page[0]
         start_urls.append(curr_url)
         start_urls.append(next_url)
     # print start_urls
+    
 
     """
     rules = ( Rule (SgmlLinkExtractor(restrict_xpaths=('//a[@class="page-option available-number"]/@href',)), follow= True),
@@ -39,7 +56,6 @@ class DemoSpider(scrapy.Spider):
             k = url.rfind('/')
             url = url[:k] + '/ls.jpg'
             item['image_urls'].append(url)
-        print item['image_urls']
 
         yield item
        
